@@ -1,0 +1,74 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head
+    content must come *after* these tags -->
+    <meta name="author" content="funeslab">
+    <link rel="icon" href="{% static 'appelec/img/favicon.ico' %}">
+    <meta name="description" content="{% block description %}{% endblock %}">    <!-- twitter, facebook, linkedin, whatsapp, email -->
+    <title>{% block title %}{% endblock %}</title> <!-- facebook, linkedin, email -->
+    <meta property="og:image" content="{% static 'appelec/img/program.png' %}"> <!-- facebook -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="{% static 'appelec/vendors/bootstrap/css/bootstrap.min.css' %}" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="{% static 'appelec/vendors/font-awesome/css/font-awesome.min.css' %}" />
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'appelec/vendors/share-button/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'appelec/css/common.css' %}" />
+    {% block css %}{% endblock %}
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    <style>{% block customcss %}{% endblock %}</style>
+  </head>
+  <body>
+    <!--NAVIGATION -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'search' %}{{ query_string }}">Funes</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <p class="navbar-text">{% block header %}{% endblock %}</p>
+          <ul class="nav navbar-nav navbar-right">
+            {% block navigation %}{% endblock %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+      <share-button></share-button>
+    </nav>
+    <!--END NAVIGATION -->
+    {% block content %}{% endblock %}
+    <span id="top-link-block" class="hidden">
+      <a href="#top" class="well well-sm">
+        <i class="glyphicon glyphicon-chevron-up"></i> Subir
+      </a>
+    </span><!-- /top-link-block -->
+    <script src="{% static 'appelec/vendors/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'appelec/vendors/bootstrap/js/bootstrap.min.js' %}"></script>
+    {% block js %}{% endblock %}
+    <script src="{% static 'appelec/vendors/share-button/ShareButton.min.js' %}"></script>
+    <script src="{% static 'appelec/js/common.js' %}"></script>
+    <script>
+      {% block customjs %}{% endblock %}
+    </script>
+    {% block lastjs %}{% endblock %}
+  </body>
+</html>

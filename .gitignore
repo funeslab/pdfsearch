@@ -1,0 +1,11 @@
+build/
+.idea/
+*~
+*.py[cod]
+*/env/
+# django
+*.log
+env
+web/db.sqlite3
+web/appelec/static/appelec/pdf/
+docker/build.tgz

@@ -1,0 +1,150 @@
+{% extends "appelec/_base.html" %}
+{% load underscore_dict %}
+{% load multiply %}
+{% load staticfiles %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'appelec/programs.css' %}" />
+{% endblock %}
+
+
+{% block title %}Buscador de programas electorales{% endblock %}
+
+{% block description %}Busca en los programas electorales: {% for p in phrases %}{% if forloop.last %}'{{p}}'{% else %}'{{p}}' o {% endif %}{% endfor %}{% endblock %}
+
+{% block header %}Buscando:
+    {% for p in phrases %}
+      {% if forloop.last %}<em>"{{p}}"</em>{% else %}<em>"{{p}}"</em> o{% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block navigation %}
+  {% include 'appelec/_nav_init.html' %}
+  {% include 'appelec/_nav_share.html' %}
+{% endblock %}
+
+{% block content %}
+  <!-- modal message -->
+  <div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="messageModalLabel">MessageModalLabel</h4>
+        </div>
+        <div class="modal-body">
+          <p id="messageModalContent">
+            messageModalContent
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- end modal message -->
+<!-- modal pdf -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="pdfModalLabel">Descargar documento original</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          Puedes descargar el documento PDF tal y como lo presentó el partido.
+          Descarga el documento completo o sólo la página en la que te encontrabas
+          en el momento de pulsar el botón.
+        </p>
+        <p>
+          Los términos de búsqueda no aparecen resaltados.
+        </p>
+        <div>
+          <a id="complete-pdf" download class="btn btn-primary" href=".">PDF completo <span class="fa fa-file-pdf-o"></a>
+          <a id="page-pdf" download class="btn btn-default" href=".">PDF página <span id="page-pdf-number">-</span> <span class="fa fa-file-pdf-o"></a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end modal pdf -->
+<!-- container -->
+<div class="container">
+  {% for program in hits.hits %}
+  <h4>
+    <img  width="60" height="60" alt="{{ program.fields.party.0 }}" src="{% static 'appelec/img/' %}{{ program|get:"_id"}}.png"></img>
+    <span class="hidden-xs">{{ program.fields.party.0 }}</span>
+    <small>Resultados: {{ program.pages.hits|length }}, Puntos:
+      {{ program|get:"_score"|multiply:1000|floatformat:"0" }}
+    </small>
+  </h4>
+
+
+  <div class="input-group">
+    <input disabled type="text" class="form-control" text="hola" value='{% for p in phrases %}{% if forloop.last %}"{{p}}"{% else %}"{{p}}" o {% endif %}{% endfor %}'></input>
+
+    <div class="input-group-btn">
+      <span class="disabled btn btn-default program-search">
+      <span id="txt_current_{{ program|get:"_id"}}"></span> de <span id="txt_total_{{ program|get:"_id"}}"></span>
+      </span>
+      <button type="button" class="btn btn-default" id="btn_prev_{{ program|get:"_id"}}" title="anterior">
+        <span class="glyphicon glyphicon-chevron-up"></span></button>
+      <button type="button" class="btn btn-primary" id="btn_next_{{ program|get:"_id"}}" title="siguiente">
+        <span class="glyphicon glyphicon-chevron-down"></span></button>
+    </div>
+  </div>
+
+
+  <div class="program-container embed-responsive {% if forloop.first and forloop.last %}embed-responsive-16by9 {% else %} embed-responsive-16by4{%endif%}">
+    <iframe class="embed-responsive-item" id="{{ program|get:"_id"}}" src="/page/{{ program.pages.hits.0|get:"_id"}}/?{% for phrase in phrases %}q_{{forloop.counter0}}={{ phrase }}&{% endfor %}"></iframe>
+  </div>
+
+
+  <div class="btn-group">
+    <span class="disabled btn btn-default program-page">
+      p. <span id="pg_{{ program|get:"_id"}}"></span> de {{ program.fields.pages.0 }}
+    </span>
+    <button class="btn btn-default"  id="btn_prev_pg_{{ program|get:"_id"}}" title="página anterior">
+      <span class="glyphicon glyphicon-chevron-left"></span></button>
+    <button class="btn btn-default" id="btn_next_pg_{{ program|get:"_id"}}" title="página siguiente">
+      <span class="glyphicon glyphicon-chevron-right"></span></button>
+    <button class="btn btn-default" id="btn_pdf_{{ program|get:"_id"}}" title="imprimir pdf">
+      Original <span class="fa fa-file-pdf-o"></span></button>
+  </div>
+  {% endfor %}
+  <br>
+  <br>
+</div><!-- content -->
+<br>
+<br>
+{% endblock %}
+{% block js %}
+<script src="{% static 'appelec/programs.js' %}"></script>
+{% endblock %}
+{% block customjs %}
+  var programid = "";
+  var query = "/?"
+    {% for phrase in phrases %}
+  query += "q_{{forloop.counter0}}={{ phrase }}&";
+    {% endfor %}
+  var program = null;
+  var pages = 0;
+  {% for program in hits.hits %}
+    programid = "{{ program|get:"_id" }}";
+    pages = {{ program.fields.pages.0 }};
+    // var {{ program|get:"_id" }} ...
+    program = new Program(programid, query, pages);
+    {% for page in program.pages.hits %}
+      program.addPage({{ page.sort.0 }}, "{{ page|get:"_id"}}");{% endfor %}
+      program.init();
+  {% endfor %}
+{% endblock %}

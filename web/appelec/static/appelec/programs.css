@@ -1,0 +1,16 @@
+span.program-page {
+    width: 120px;
+}
+
+span.program-search {
+    width: 100px;
+}
+
+.embed-responsive-16by4 {
+    padding-bottom: 25%;
+    min-height: 150px;
+}
+
+.program-container {
+    border: 1px solid #ccc;
+}

@@ -1,0 +1,51 @@
+/* overflow title in navigation bar */
+.nav-text-big {
+    max-height: 18px;
+    overflow: hidden;
+    overflow-text: ellipsis;
+}
+
+
+/* share-button */
+share-button {
+    visibility:hidden !important;
+    font-size: 0px !important;
+    padding: 0px !important;
+}
+
+share-button:before {
+    background: none !important;
+}
+
+share-button .sb-social {
+    margin-left: 30px !important;
+    z-index: 2;
+/*
+    opacity: 100;
+    visibility: visible !important;
+*/
+}
+
+share-button .sb-social li[class*=email]:before{
+    width: 30px !important;
+    left: 25px !important;
+}
+
+share-button .sb-social li[class*=email]:after{
+    width: 30px !important;
+    left: 25px !important;
+}
+
+/* top-link button */
+#top-link-block.affix-top {
+    position: absolute; /* allows it to "slide" up into view */
+    bottom: -42px; /* negative of the offset - height of link element */
+    left: 10px; /* padding from the left side of the window */
+    z-index: 3;
+}
+#top-link-block.affix {
+    position: fixed; /* keeps it on the bottom once in view */
+    bottom: 18px; /* height of link element */
+    left: 10px; /* padding from the left side of the window */
+}
+/* END top-link button */

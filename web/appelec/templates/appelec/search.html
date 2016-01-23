@@ -1,0 +1,136 @@
+{% extends "appelec/_base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+   <link rel="stylesheet" href="{% static 'appelec/search.css' %}" />
+{% endblock %}
+
+{% block title %}Buscador de programas electorales{% endblock %}
+
+{% block description %}Buscador de términos en programas electorales. Elecciones generales 2015.{% endblock %}
+
+{% block header %}Elecciones generales de España de 2015{% endblock %}
+
+{% block navigation %}
+  {% with page="search" %}
+  {% include 'appelec/_nav_init.html' %}
+  {% include 'appelec/_nav_share.html' %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+   <div class="container">
+     {% if phrases %}
+     <div class="alert alert-danger alert-dismissible fade in" role="alert">
+       <button aria-label="Close" data-dismiss="alert" class="close" type="button">
+         <span aria-hidden="true">×</span></button>
+       No hay resultados para <strong>
+         {% for p in phrases %}
+           {% if forloop.last %}
+             "{{p}}"
+           {% else %}
+             "{{p}}" o
+         {% endif %}
+         {% endfor %}
+       </strong>. Inténtalo con otra búsqueda.
+     </div>
+     {% endif %}
+     <form role="form" method="get" class="form-horizontal" action="/programs/">
+       <h1 class="h2 form-search-heading">Buscador de programas</h1>
+       <div class="form-group search-input">
+         <label class="control-label col-sm-2" for="input-q_0">Buscar&nbsp;</label>
+         <div class="col-sm-10">
+           <input type="text" id="input-q1" size="30" class="form-control"
+                  autocomplete="off" spellcheck="false"
+                  placeholder="Término de búsqueda" autofocus required
+                  name="q_0"></input>
+         </div>
+       </div>
+       <div class="form-group">
+         <label class="control-label col-sm-2" for="z">Zona&nbsp;</label>
+         <div class="col-sm-10">
+           <select id="zone" class="form-control" name="z">
+             {% for z in zones %}
+             <option value={{ forloop.counter0 }}
+                     {% if forloop.counter0 == zone %}selected{% endif %}
+                     >{{ z.title }}</option>
+             {% endfor %}
+           </select>
+         </div>
+       </div>
+       <div class="form-group">
+         <label class="control-label col-sm-2" for="input-q_0">Partidos&nbsp;</label>
+         <div class="col-sm-10">
+           <input id="parties" type="hidden" name="p"></input>
+           <div id="parties-container" class="row">
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <div class="col-sm-offset-2 col-sm-10">
+           <button id="button-submit" class="btn btn-primary" type="submit">
+             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;Buscar
+           </button>
+           <button id="bt-synonym" class="btn btn-default" type="button">
+             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Añadir sinónimo
+           </button>
+         </div>
+       </div>
+     </form>
+     <br>
+     <br>
+     <div id="help" class="well">
+       <h2 class="h3">Introducción</h2>
+       <p>
+         El <strong>Buscador de programas</strong> permite buscar en
+         los programas de los partidos que se presentan a las elecciones
+         generales de España 2015.
+       </p>
+        <p>
+          Esta aplicación la hizo <a href="http://funeslab.com">Funes
+          Lab</a>. Cualquier sugerencia, error o duda, puedes ponerte en
+          contacto con nosotros en:
+          <a href="mailto:hola@funeslab.com">hola@funeslab.com</a>.
+        </p>
+        <h2 class="h3">Instrucciones</h2>
+        <p>
+          <ol>
+            <li>En la casilla <b>Buscar</b> introduce una palabra o frase.
+            <li>Si hay otras palabras o frases equivalentes pulsa el botón
+              <b>Añadir sinónimo</b> tantas veces como desees.
+              Aparecerá otra casilla como la de buscar para que pongas los
+              sinónimos.
+            <li>Escoge la <b>Zona</b> en el selector.
+            <li>Puedes desmarcar los partidos que no quieras que te aparezcan en
+              la búsqueda.
+            <li>Pulsa el botón <b>Buscar</b>.
+          </ol>
+        </p>
+
+        <p>
+          Una vez en la página de resultados, para cada programa, puedes:
+          <ul>
+            <li>Avanzar/retroceder en los resultados de la búsqueda. Botones
+              <span class="glyphicon glyphicon-chevron-up"></span> y
+              <span class="glyphicon glyphicon-chevron-down"></span>
+              de la parte superior.
+            <li>Avanzar/retroceder páginas en el programa. Botones
+              <span class="glyphicon glyphicon-chevron-left"></span> y
+              <span class="glyphicon glyphicon-chevron-right"></span>
+              de la parte inferior.
+            <li>Descargar una página del programa original o el programa entero.
+              Botón <span class="fa fa-file-pdf-o"></span>.
+          </ul>
+        </p>
+      </div> <!-- help -->
+    </div> <!-- Container -->
+{% endblock %}
+{% block js %}
+<script src="{% static 'appelec/search.js' %}"></script>
+{% endblock %}
+{% block customjs %}
+var programs = {{ programs_js|safe }};
+var zones = {{ zones_js|safe }};
+var parties = {{parties_js|safe}};
+var static_img = "{% static 'appelec/img/' %}";
+{% endblock %}
